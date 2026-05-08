@@ -1,4 +1,4 @@
-# Basecta — Hedgerow Grading Tool
+# Basecta - Hedgerow Grading Tool
 
 A web tool for ecologists to grade hedgerow quality from uploaded images.
 
@@ -14,9 +14,9 @@ in early May 2026.
 Ecologists upload images of hedgerows and assign each a quality grade on a 
 1–3 scale:
 
-- **1 — Good**
-- **2 — Moderate**
-- **3 — Poor**
+- **1 - Good**
+- **2 - Moderate**
+- **3 - Poor**
 
 Graded images are stored alongside their assessment, building a structured 
 dataset of hedgerow conditions on Irish farmland.
