@@ -49,17 +49,4 @@ public class S3Config {
                 ))
                 .build();
     }
-
-    @Bean
-    ApplicationRunner s3StartupCheck(S3Client s3Client) {
-        return args -> {
-            var buckets = s3Client.listBuckets().buckets();
-            log.info("MinIO connection OK. Buckets visible {}",
-                    buckets.stream().map(Bucket::name).toList());
-        };
-    }
-
-
-
-
 }
