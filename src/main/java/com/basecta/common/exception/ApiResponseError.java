@@ -1,6 +1,7 @@
 package com.basecta.common.exception;
 
 import java.time.Instant;
+import java.util.List;
 
 public record ApiResponseError(
     Instant timestamp,
@@ -8,5 +9,6 @@ public record ApiResponseError(
     String error,
     String code,
     String message,
-    String path
+    String path,
+    List<FieldError> fieldErrors
 ) {}

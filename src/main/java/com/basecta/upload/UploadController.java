@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/upload")
+@RequestMapping("/api/upload")
 public class UploadController {
 
     private final ImageUploadService imageUploadService;

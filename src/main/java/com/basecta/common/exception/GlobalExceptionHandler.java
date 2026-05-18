@@ -1,15 +1,23 @@
 package com.basecta.common.exception;
 
 import com.basecta.upload.exception.*;
+import com.basecta.user.exception.EmailAlreadyTakenException;
+import com.basecta.user.exception.UsernameAlreadyTakenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.w3c.dom.html.HTMLParagraphElement;
 
+import java.lang.reflect.Field;
+import java.text.DateFormat;
 import java.time.Instant;
+import java.util.List;
 
 @Slf4j
 @ControllerAdvice
@@ -25,7 +33,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 "TOKEN_NOT_FOUND",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
@@ -41,7 +50,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.GONE.getReasonPhrase(),
                 "TOKEN_EXPIRED",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.GONE).body(body);
@@ -57,7 +67,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
                 "QUOTA_EXCEEDED",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(body);
@@ -73,7 +84,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "FILE_EMPTY",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
@@ -89,7 +101,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 "UNSUPPORTED_FILE_TYPE",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
@@ -105,11 +118,52 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "UPLOAD_FAILED",
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
+
+    @ExceptionHandler({UsernameAlreadyTakenException.class, EmailAlreadyTakenException.class})
+    public ResponseEntity<ApiResponseError> handleConflict(RuntimeException ex, HttpServletRequest request) {
+        log.debug("Conflict: {}", ex.getMessage());
+
+        ApiResponseError body = new ApiResponseError(
+                Instant.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                "USER_CONFLICT",
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponseError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> new FieldError(err.getField(), err.getDefaultMessage()))
+                .toList();
+
+        log.debug("Validation failed: {}", fieldErrors);
+
+        ApiResponseError body = new ApiResponseError(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "VALIDATION_FAILED",
+                "Validation failed on 1 or more fields",
+                request.getRequestURI(),
+                fieldErrors
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseError> handleUnexpected(Exception ex, HttpServletRequest request) {
@@ -121,7 +175,8 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 "UNHANDLED_EXCEPTION",
                 "An unexpected error occurred",
-                request.getRequestURI()
+                request.getRequestURI(),
+                null
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
