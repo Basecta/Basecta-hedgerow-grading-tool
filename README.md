@@ -38,5 +38,4 @@ Automation can come later, on top of a dataset that doesn't yet exist.
 
 ## Background
 
-See the [archived prototype](https://github.com/Basecta/Basecta-prototype) 
-for the FastAPI/Next.js exploration that preceded this rebuild.
+See the [archived prototype](https://github.com/Basecta/Basecta-prototype)
