@@ -2,7 +2,7 @@ package com.basecta.upload;
 
 import com.basecta.config.S3Properties;
 import com.basecta.upload.exception.UploadFailedException;
-import com.basecta.upload.exception.UploadMessages;
+import com.basecta.upload.exception.UploadExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class S3StorageService {
         }
         catch (SdkException ex) {
             log.error("Failed to upload object to MinIO", ex);
-            throw new UploadFailedException(UploadMessages.UPLOAD_FAILED, ex);
+            throw new UploadFailedException(UploadExceptionMessages.UPLOAD_FAILED, ex);
         }
 
         return key;

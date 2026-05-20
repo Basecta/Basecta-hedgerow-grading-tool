@@ -14,9 +14,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "id")
 @EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "users")
+@ToString(exclude = "passwordHash")
 public class User {
 
     @Id

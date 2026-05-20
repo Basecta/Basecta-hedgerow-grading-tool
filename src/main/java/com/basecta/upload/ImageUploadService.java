@@ -37,22 +37,22 @@ public class ImageUploadService {
     public UploadResponse upload(MultipartFile file, String token) {
 
         UploadLink link = uploadLinkRepository.findByToken(token)
-                .orElseThrow(() -> new UploadTokenNotFoundException(UploadMessages.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new UploadTokenNotFoundException(UploadExceptionMessages.TOKEN_NOT_FOUND));
 
         if (link.getExpiresAt() != null && link.getExpiresAt().isBefore(Instant.now())) {
-            throw new UploadTokenExpiredException(UploadMessages.TOKEN_EXPIRED);
+            throw new UploadTokenExpiredException(UploadExceptionMessages.TOKEN_EXPIRED);
         }
         if (link.getMaxUploads() != null && link.getUploadCount() >= link.getMaxUploads()) {
-            throw new UploadQuotaExceededException(UploadMessages.QUOTA_EXCEEDED);
+            throw new UploadQuotaExceededException(UploadExceptionMessages.QUOTA_EXCEEDED);
         }
         if (file.isEmpty()) {
-            throw new InvalidUploadException(UploadMessages.FILE_EMPTY);
+            throw new InvalidUploadException(UploadExceptionMessages.FILE_EMPTY);
         }
 
         String contentType = file.getContentType();
 
         if (contentType == null || !ALLOWED_TYPES.contains(contentType.toLowerCase())) {
-            throw new UnsupportedFileTypeException(UploadMessages.UNSUPPORTED_FILE_TYPE);
+            throw new UnsupportedFileTypeException(UploadExceptionMessages.UNSUPPORTED_FILE_TYPE);
         }
 
         InputStream content;
@@ -63,7 +63,7 @@ public class ImageUploadService {
         }
         catch (IOException ex) {
             log.error("Failed to read upload stream", ex);
-            throw new UploadFailedException(UploadMessages.UPLOAD_FAILED, ex);
+            throw new UploadFailedException(UploadExceptionMessages.UPLOAD_FAILED, ex);
         }
 
         String key = s3StorageService.upload(content, file.getContentType(), file.getSize());

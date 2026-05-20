@@ -3,7 +3,7 @@ package com.basecta.user;
 import com.basecta.user.dto.RegisterUserRequest;
 import com.basecta.user.dto.UserResponse;
 import com.basecta.user.exception.EmailAlreadyTakenException;
-import com.basecta.user.exception.UploadMessages;
+import com.basecta.user.exception.UserExceptionMessages;
 import com.basecta.user.exception.UsernameAlreadyTakenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,10 +20,10 @@ public class UserService {
     public UserResponse register(RegisterUserRequest request) {
 
         if (userRepository.existsByUsername(request.username())) {
-            throw new UsernameAlreadyTakenException(UploadMessages.USERNAME_TAKEN);
+            throw new UsernameAlreadyTakenException(UserExceptionMessages.USERNAME_TAKEN);
         }
         if (userRepository.existsByEmail(request.email())) {
-            throw new EmailAlreadyTakenException(UploadMessages.EMAIL_TAKEN);
+            throw new EmailAlreadyTakenException(UserExceptionMessages.EMAIL_TAKEN);
         }
 
         String passwordHash = passwordEncoder.encode(request.password());
