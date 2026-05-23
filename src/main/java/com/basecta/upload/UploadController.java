@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/upload")
 public class UploadController {
 
-    private final ImageUploadService imageUploadService;
+    private final UploadService imageUploadService;
 
     @PostMapping("/{token}")
     public ResponseEntity<UploadResponse> upload(@PathVariable String token, @RequestParam("file")MultipartFile file) {

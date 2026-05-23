@@ -18,7 +18,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ImageUploadService {
+public class UploadService {
 
     private final UploadLinkRepository uploadLinkRepository;
     private final ImageRepository imageRepository;
