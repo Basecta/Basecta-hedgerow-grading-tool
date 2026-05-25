@@ -1,22 +1,18 @@
 package com.basecta.common.exception;
 
+import com.basecta.auth.exception.InvalidCredentialsException;
 import com.basecta.upload.exception.*;
 import com.basecta.user.exception.EmailAlreadyTakenException;
 import com.basecta.user.exception.UserNotFoundException;
 import com.basecta.user.exception.UsernameAlreadyTakenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.w3c.dom.html.HTMLParagraphElement;
 
-import java.lang.reflect.Field;
-import java.text.DateFormat;
 import java.time.Instant;
 import java.util.List;
 
@@ -182,10 +178,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ApiResponseError> handleInvalidCredentials(InvalidCredentialsException ex, HttpServletRequest request) {
+        log.debug("Invalid credentials: {}", ex.getMessage());
+
+        ApiResponseError body = new ApiResponseError(
+                Instant.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                "INVALID_CREDENTIALS",
+                "Invalid email or password",
+                request.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseError> handleUnexpected(Exception ex, HttpServletRequest request) {
-        log.error("Unhandled exception: {}", ex.getMessage());
+        log.error("Unhandled exception at {}", request.getRequestURI(), ex);
 
         ApiResponseError body = new ApiResponseError(
                 Instant.now(),

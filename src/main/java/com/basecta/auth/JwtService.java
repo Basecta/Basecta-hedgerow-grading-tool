@@ -22,7 +22,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("$jwt.expiration")
+    @Value("${jwt.expiration}")
     private long expirationMs;
 
     public String generateToken(UUID userId, String username) {
