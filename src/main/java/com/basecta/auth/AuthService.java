@@ -32,7 +32,7 @@ public class AuthService {
             UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
             User user = principal.user();
 
-            String token = jwtService.generateToken(user.getId(), user.getUsername());
+            String token = jwtService.generateToken(user.getId(), user.getEmail());
 
             return new LoginResponse(token, user.getId(), user.getUsername(), user.getEmail());
         }
