@@ -2,6 +2,7 @@ package com.basecta.upload;
 
 import com.basecta.image.Image;
 import com.basecta.image.ImageRepository;
+import com.basecta.storage.S3StorageService;
 import com.basecta.upload.dto.UploadResponse;
 import com.basecta.upload.exception.*;
 import lombok.RequiredArgsConstructor;

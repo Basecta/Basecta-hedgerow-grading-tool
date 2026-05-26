@@ -1,12 +1,14 @@
 package com.basecta.common.exception;
 
 import com.basecta.auth.exception.InvalidCredentialsException;
+import com.basecta.image.exception.ImageNotFoundException;
 import com.basecta.upload.exception.*;
 import com.basecta.user.exception.EmailAlreadyTakenException;
 import com.basecta.user.exception.UserNotFoundException;
 import com.basecta.user.exception.UsernameAlreadyTakenException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -195,6 +197,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(body);
     }
 
+    @ExceptionHandler(ImageNotFoundException.class)
+    public ResponseEntity<ApiResponseError> handleImageNotFound(ImageNotFoundException ex, HttpServletRequest request) {
+        log.debug("Image does not exist: {}", ex.getMessage());
+
+        ApiResponseError body = new ApiResponseError(
+                Instant.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                "IMAGE_NOT_FOUND",
+                ex.getMessage(),
+                request.getRequestURI(),
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseError> handleUnexpected(Exception ex, HttpServletRequest request) {

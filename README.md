@@ -31,7 +31,7 @@ Automation can come later, on top of a dataset that doesn't yet exist.
 
 ## Tech stack
 
-- **Backend:** Java 21, Spring Boot 3, Spring Security, JPA/Hibernate
+- **Backend:** Java 21, Spring Boot 4, Spring Security, JPA/Hibernate
 - **Database:** PostgreSQL
 - **Frontend:** [TBD]
 - **Image storage:** [TBD]
